@@ -11,15 +11,9 @@ class UserSerializer(ModelSerializer):
                   'last_name', 'email', 'date_joined']
 
 
-class IssueTokenRequestSerializer(Serializer):
+class LoginRequestSerializer(Serializer):
     model = User
 
     username = CharField(required=True)
     password = CharField(required=True)
 
-
-class TokenSeriazliser(ModelSerializer):
-
-    class Meta:
-        model = Token
-        fields = ['key']

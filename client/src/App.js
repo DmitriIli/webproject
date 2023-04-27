@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 function App() {
 
-  const [token, setToken] = useState()
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
   const [loading, setLoading] = useState()
   const [formUsername, setFormUsername] = useState()
   const [formPassword, setFormPassword] = useState()
@@ -15,36 +21,40 @@ function App() {
   const [dateJoined, setDateJoined] = useState('')
   const [error, setError] = useState()
 
+  const csrftoken = getCookie('csrftoken')
+
   useEffect(() => {
-    fetch(
-      '/api/user',
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Authorization': `Token ${token}`,
-        },
-      }
-    )
-      .then(response => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          throw Error(`Something went wrong: code ${response.status}`)
+    if (isLoggedIn) {
+      fetch(
+        '/api/user',
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
         }
-      })
-      .then(({ data }) => {
-        setFirstName(data.first_name)
-        setLastName(data.last_name)
-        setUsername(data.username)
-        setEmail(data.email)
-        setDateJoined(data.date_joined)
-        setError(null)
-      })
-      .catch(error => {
-        console.log(error)
-        setError('Ошибка, подробности в консоли')
-      })
-  }, [token])
+      )
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            throw Error(`Something went wrong: code ${response.status}`)
+          }
+        })
+        .then(({ data }) => {
+          setFirstName(data.first_name)
+          setLastName(data.last_name)
+          setUsername(data.username)
+          setEmail(data.email)
+          setDateJoined(data.date_joined)
+          setError(null)
+        })
+        .catch(error => {
+          console.log(error)
+          setError('Ошибка, подробности в консоли')
+          setIsLoggedIn(false)
+        })
+    }
+  }, [isLoggedIn])
 
   const submitHandler = e => {
     e.preventDefault();
@@ -55,6 +65,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
+          'X-CSRFToken': csrftoken,
         },
         body: JSON.stringify({
           username: formUsername,
@@ -70,7 +81,7 @@ function App() {
         }
       })
       .then(({ key }) => {
-        setToken(key)
+        setIsLoggedIn(true)
         setError(null)
       })
       .catch(error => {
@@ -84,7 +95,7 @@ function App() {
   return (
     <div className="App">
       {error ? <p>{error}</p> : null}
-      {!token ?
+      {!isLoggedIn ?
         loading ? "Загрузка..." :
           <form className="loginForm" onSubmit={submitHandler}>
             <input type="text" name="username" value={formUsername} onChange={e => setFormUsername(e.target.value)} placeholder="Username" />

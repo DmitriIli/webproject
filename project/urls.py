@@ -5,5 +5,5 @@ from server import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', views.user, name='user'),
-    path('api/login', views.issue_token, name='issue_token'),
+    path('api/login', views.login, name='login'),
 ]
