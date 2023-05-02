@@ -3,12 +3,11 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 
-class UserSerializer(ModelSerializer):
-
+class UserSerilazer(ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name',
-                  'last_name', 'email', 'date_joined']
+            'last_name', 'email', 'date_joined']
 
 
 class LoginRequestSerializer(Serializer):
@@ -16,4 +15,3 @@ class LoginRequestSerializer(Serializer):
 
     username = CharField(required=True)
     password = CharField(required=True)
-
