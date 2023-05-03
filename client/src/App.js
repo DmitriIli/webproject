@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2)
-    return parts.pop().split(';').shift();
+  if (parts.length === 2) return parts.pop().split(';').shift();
 }
-
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(true)
@@ -22,6 +21,7 @@ function App() {
   const [error, setError] = useState()
   const csrftoken = getCookie('csrftoken')
 
+
   useEffect(() => {
     if (isLoggedIn) {
       fetch(
@@ -29,6 +29,7 @@ function App() {
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
+            
           },
         }
       )
@@ -50,6 +51,7 @@ function App() {
         .catch(error => {
           console.log(error)
           setError('Ошибка, подробности в консоли')
+          setIsLoggedIn(false)
         })
     }
   }, [isLoggedIn])
@@ -63,7 +65,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
-          'X-CSRFToken': csrftoken
+          'X-CSRFToken': csrftoken,
         },
         body: JSON.stringify({
           username: formUsername,
@@ -92,7 +94,7 @@ function App() {
   return (
     <div className="App">
       {error ? <p>{error}</p> : null}
-      {!isLoggedIn?
+      {!isLoggedIn ?
         loading ? "Загрузка..." :
           <form className="loginForm" onSubmit={submitHandler}>
             <input type="text" name="username" value={formUsername} onChange={e => setFormUsername(e.target.value)} placeholder="Username" />

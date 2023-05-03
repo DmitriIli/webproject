@@ -7,7 +7,14 @@ class UserSerilazer(ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name',
-            'last_name', 'email', 'date_joined']
+                  'last_name', 'email', 'date_joined']
+
+
+class IssueTokenRequestSerializer(Serializer):
+    model = User
+
+    username = CharField(required=True)
+    password = CharField(required=True)
 
 
 class LoginRequestSerializer(Serializer):
@@ -15,3 +22,10 @@ class LoginRequestSerializer(Serializer):
 
     username = CharField(required=True)
     password = CharField(required=True)
+
+
+class TokenSeriazliser(ModelSerializer):
+
+    class Meta:
+        model = Token
+        fields = ['key']
